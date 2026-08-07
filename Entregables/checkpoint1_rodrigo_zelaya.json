@@ -1,0 +1,341 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Fecha actual: {{ $now.format('yyyy-MM-dd') }}\nMensaje de Rodrigo: {{ $json.message.text }}\n",
+        "options": {
+          "systemMessage": "ROL\nSos el Asistente de Registro y Categorización de Gastos Personales de Rodrigo, inspirado en el funcionamiento de la app Toto. Tu única función es interpretar los mensajes que Rodrigo te manda por Telegram describiendo un gasto, estructurarlos según las categorías definidas y registrarlos en su planilla de control financiero (Google Sheets).\n\nÁMBITO\nPodés:\n- Interpretar mensajes en lenguaje natural que describan un gasto (ej: \"1490 gasto subte, crédito\", \"gasté 8500 en el supermercado\", \"pagué el alquiler 250000\").\n- Extraer y estructurar los siguientes datos de cada gasto:\n  - Concepto: una descripción corta del gasto (ej: \"subte\", \"supermercado\", \"alquiler\").\n  - Descripción: detalle adicional si el usuario lo da (opcional).\n  - Categoría y Subcategoría: elegidas ÚNICAMENTE de la siguiente lista fija (nunca inventes categorías nuevas):\n    - Alimentación: Restaurantes y delivery, Supermercado, Otros (Alimentación)\n    - Bienestar: Cuidado Personal, Deporte, Educación, Salud, Otros (Bienestar)\n    - Compras: Electrónicos, Hogar, Mascotas, Medicina, Niños, Suscripciones, Vestimenta, Otros (Compras)\n    - Movilidad: Apps de viajes, Combustible, Patente y seguro, Transporte Público, Otros (Movilidad)\n    - Obligaciones: Gastos laborales, Servicios profesionales, Trámites e impuestos, Otros (Obligaciones)\n    - Recreación: Eventos, Hobbies, Vacaciones, Otros (Recreación)\n    - Vivienda: Alquiler, Conectividad, Servicios, Otros (Vivienda)\n  - Monto: el valor numérico del gasto.\n  - Moneda: ARS, USD o EUR. Si Rodrigo no la aclara, asumí ARS.\n  - Medio de pago: Efectivo, Débito, Crédito, Transferencia o Mercado Pago, solo si Rodrigo lo menciona explícita o implícitamente (ej: \"crédito\", \"con la débito\", \"transferencia\"). Si no lo menciona, dejalo vacío — no lo inventes.\n  - Fecha del gasto: la fecha del día en que se recibe el mensaje, salvo que Rodrigo indique otra explícitamente.\n  - Tipo de Gasto: \"Único\" por defecto. Usá \"Recurrente\" solo si Rodrigo dice que se repite (ej: \"todos los meses\", \"es fijo\") — en ese caso agregá también Frecuencia (Semanal/Mensual/Anual) y Día del mes si lo menciona. Usá \"En Cuotas\" solo si menciona cuotas (ej: \"en 3 cuotas\", \"lo pagué en 6 pagos\") — en ese caso agregá el Número de Cuotas.\n- Registrar el gasto ya estructurado en la planilla usando la herramienta de Google Sheets disponible.\n\nNo podés:\n- Eliminar o modificar registros ya cargados en la planilla.\n- Realizar ninguna acción financiera real (transferencias, pagos, inversiones).\n- Inventar montos, fechas, medios de pago o categorías que Rodrigo no haya provisto ni se puedan inferir razonablemente del mensaje.\n- Responder temas que no estén relacionados con el registro de gastos personales.\n\nOBJETIVO OPERATIVO\nAl finalizar cada interacción, debés haber agregado una fila nueva y correcta en la planilla de Gastos con todos los campos estructurados definidos arriba, y haber confirmado a Rodrigo, en un mensaje breve y prolijo (formato tipo \"Monto · Fecha — Categoría > Subcategoría > Concepto — Medio de pago\"), qué quedó registrado.\n\nREGLAS DE USO DE HERRAMIENTAS\n- Antes de invocar la herramienta de Google Sheets, verificá que el mensaje incluya al menos un concepto y un monto numérico. Ambos son obligatorios.\n- Si falta el monto o el concepto, no registres nada: pedile a Rodrigo que te lo aclare.\n- La Categoría y Subcategoría son obligatorias y siempre deben salir de la lista fija de arriba; si la descripción es ambigua, elegí la opción \"Otros\" de la categoría más probable en vez de inventar una subcategoría nueva.\n- Medio de pago, Moneda, Tipo de Gasto (y sus datos asociados de Frecuencia/Cuotas) se completan según las reglas de arriba; nunca le preguntes a Rodrigo por estos datos si no los mencionó — usá los valores por defecto.\n\nESCALAMIENTO Y GUARDRAILS\n- Si Rodrigo pide borrar, corregir un gasto ya cargado, o hacer cualquier cosa fuera del registro de gastos (transferencias, consejos de inversión, etc.), respondé que esa acción requiere que lo revise manualmente él mismo en la planilla, y no ejecutes ninguna herramienta.\n- Si el mensaje no tiene relación alguna con un gasto, respondé amablemente que tu función es solo registrar gastos personales.\n- Nunca excedas el límite de iteraciones configurado; si no podés resolver la tarea en ese límite, informá el problema en vez de seguir intentando indefinidamente.\n\nESTILO\nRedactá siempre en español estándar, sin utilizar lenguaje inclusivo (evitá formas como \"elles\", \"todes\", o terminaciones en \"x\"/\"@\" para marcar género); usá el masculino genérico o formas neutras tradicionales. Mantené un tono breve, claro y directo.\n",
+          "maxIterations": 8
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "5612cde0-347a-457c-a182-f5c19d16a0e0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "c7311f57-01cf-4e55-9df0-f04de770c839",
+      "name": "Telegram Trigger",
+      "webhookId": "1b623ba1-c355-4c28-b161-f1a3e38ec23b",
+      "credentials": {
+        "telegramApi": {
+          "id": "Ins6cJO5wy9EOGKn",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-sonnet-5",
+          "mode": "list",
+          "cachedResultName": "Claude Sonnet 5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        96,
+        208
+      ],
+      "id": "9a27ef0f-3150-46cd-b80a-698798edcc82",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "NBjdagBFjoDppMne",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "Usá esta herramienta para agregar una fila nueva a la planilla de gastos personales de Rodrigo, cada vez que él te reporte por Telegram un gasto real que ya realizó (compras, pagos de servicios, transporte, comida, alquiler, suscripciones, etc.). Antes de llamarla, asegurate de tener al menos un Concepto y un Monto numérico claros en el mensaje del usuario — si falta el monto, no uses la herramienta, pedile la aclaración primero. Completá todos los campos según las reglas del System Message: Categoría y Subcategoría deben salir siempre de la lista fija de categorías definida (Alimentación, Bienestar, Compras, Movilidad, Obligaciones, Recreación, Vivienda, con sus subcategorías correspondientes); Moneda por defecto ARS; Medio de Pago solo si el usuario lo menciona; Tipo de Gasto por defecto Único, salvo que el usuario indique que es un gasto recurrente o en cuotas. NO uses esta herramienta si el usuario solo está preguntando información (por ejemplo \"cuánto gasté esta semana\"), si te pide modificar o eliminar un gasto ya cargado, o si el mensaje no describe un gasto real con un monto claro — en esos casos no ejecutes la herramienta y respondé directamente.\n",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "18AEs9Vr9HAcrJY-Ko3xSGcRJYURy7QLDpH37pJK4Yz8",
+          "mode": "list",
+          "cachedResultName": "Gastos Personales Telegram",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18AEs9Vr9HAcrJY-Ko3xSGcRJYURy7QLDpH37pJK4Yz8/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/18AEs9Vr9HAcrJY-Ko3xSGcRJYURy7QLDpH37pJK4Yz8/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Fecha": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Fecha', `La fecha del gasto en formato AAAA-MM-DD. Usar la fecha de hoy salvo que el usuario indique otra explícitamente.\n`, 'string') }}",
+            "Concepto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Concepto', `Descripción corta del gasto en pocas palabras (ej: subte, supermercado, alquiler).\n`, 'string') }}",
+            "Descripción": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Descripci_n', `Detalle adicional del gasto si el usuario lo menciona. Dejar vacío si no hay más detalle.\n`, 'string') }}",
+            "Categoría": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Categor_a', `Una de estas 7 categorías exactas: Alimentación, Bienestar, Compras, Movilidad, Obligaciones, Recreación, Vivienda.\n`, 'string') }}",
+            "Subcategoría": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subcategor_a', `La subcategoría correspondiente a la Categoría elegida, según la lista fija del System Message del agente.\n`, 'string') }}",
+            "Monto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Monto', `El valor numérico del gasto, sin símbolos de moneda.\n`, 'string') }}",
+            "Moneda": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Moneda', `ARS, USD o EUR. Si el usuario no la aclara, usar ARS.\n`, 'string') }}",
+            "Medio de Pago": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Medio_de_Pago', `Efectivo, Débito, Crédito, Transferencia o Mercado Pago, solo si el usuario lo menciona. Dejar vacío si no lo menciona.\n`, 'string') }}",
+            "Tipo de Gasto": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Tipo_de_Gasto', `Único, Recurrente o En Cuotas. Por defecto es Único.\n`, 'string') }}",
+            "Frecuencia": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Frecuencia', `Semanal, Mensual o Anual. Completar solo si Tipo de Gasto es Recurrente. Dejar vacío en los demás casos.\n`, 'string') }}",
+            "Día del Mes": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('D_a_del_Mes', `Día del mes en que se repite el gasto. Completar solo si Tipo de Gasto es Recurrente y el usuario lo menciona. Dejar vacío si no aplica.\n`, 'string') }}",
+            "Número de Cuotas": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('N_mero_de_Cuotas', `Cantidad de cuotas. Completar solo si Tipo de Gasto es En Cuotas. Dejar vacío en los demás casos.\n`, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Concepto",
+              "displayName": "Concepto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Descripción",
+              "displayName": "Descripción",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Categoría",
+              "displayName": "Categoría",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Subcategoría",
+              "displayName": "Subcategoría",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Monto",
+              "displayName": "Monto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Moneda",
+              "displayName": "Moneda",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Medio de Pago",
+              "displayName": "Medio de Pago",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Tipo de Gasto",
+              "displayName": "Tipo de Gasto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Frecuencia",
+              "displayName": "Frecuencia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Día del Mes",
+              "displayName": "Día del Mes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Número de Cuotas",
+              "displayName": "Número de Cuotas",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        208
+      ],
+      "id": "538cfeb7-fdf2-43ef-a0da-a276c2e3c5fe",
+      "name": "Append row in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pVOdP1fLIKEjf828",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "rodrigo.e.zelaya@gmail.com",
+        "subject": "Nuevo gasto registrado - Bot Telegram",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        576,
+        0
+      ],
+      "id": "93dbaf31-6f76-4d85-a77b-ce765f7f3523",
+      "name": "Send a message",
+      "webhookId": "ac8505b6-4bdd-4c58-bbca-9a5617d6047a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Bnrf8hsRDpDpbkFo",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "message": {
+            "message_id": 1,
+            "from": {
+              "id": 123456789,
+              "is_bot": false,
+              "first_name": "Rodrigo"
+            },
+            "chat": {
+              "id": 123456789,
+              "type": "private"
+            },
+            "date": 1735689600,
+            "text": "gasté 8500 pesos en el supermercado con débito"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "d318064d-aabb-4b29-9705-f2f06dd49a1d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1fb1207f40b38e27395fea5f01d1b22e513628314b5c3fa127c74008792bdc6e"
+  },
+  "id": "xdhKOFPA41nHqaB8",
+  "tags": []
+}
