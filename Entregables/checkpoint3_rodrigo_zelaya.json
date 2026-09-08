@@ -1,0 +1,1375 @@
+{
+  "name": "CleanHome_Stock",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d36a5aed-920d-4c9c-90d2-e8c5e04c1ff4",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -640,
+        224
+      ],
+      "id": "f9b5439c-a737-4207-a422-fd18134e6528",
+      "name": "Webhook",
+      "webhookId": "d36a5aed-920d-4c9c-90d2-e8c5e04c1ff4"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.body.message.chat.id }}",
+        "text": "✅ Mensaje recibido. Procesando...",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -448,
+        224
+      ],
+      "id": "daeedc19-c535-4a96-a639-7ab710a12726",
+      "name": "Send a text message",
+      "webhookId": "f6eb7de4-e543-46e7-bec1-f975b21bc903",
+      "credentials": {
+        "telegramApi": {
+          "id": "rYQKWCmca2QMlRvu",
+          "name": "Telegram - StockMama_Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "eYAs1PoFGOGQqcTf",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/eYAs1PoFGOGQqcTf",
+          "cachedResultName": "worker_ingreso_stock"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [
+            "data"
+          ],
+          "schema": [
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        304,
+        64
+      ],
+      "id": "4e56c07a-8bc0-4774-b7d1-1321d78ab2e8",
+      "name": "Call 'worker_ingreso_stock'"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.message.text.toLowerCase() }}",
+                    "rightValue": "ingreso|ingresar|agregar|sumar|entrada|recib|lleg|cargar stock",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    },
+                    "id": "4804cc08-f165-4823-a862-39477833206f"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7b11dbe3-5755-4e9d-99e2-130e7566c093",
+                    "leftValue": "={{ $('Webhook').item.json.body.message.text.toLowerCase() }}",
+                    "rightValue": "consulta|cu[aá]nto|cu[aá]ntos|tengo|disponible|ten[eé]s|tienen|hay|queda|quedan|precio|vale|sale|cuesta|venden",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "36e367cf-767d-4be7-ac24-135fe2dc1876",
+                    "leftValue": "={{ $('Webhook').item.json.body.message.text.toLowerCase() }}",
+                    "rightValue": "alerta|repon|reposici|falta|agotad|bajo stock",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -288,
+        208
+      ],
+      "id": "98a95c6a-5211-4a6e-8531-52efef04e2ef",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "8FFSSBJYJgCCXeAl",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/8FFSSBJYJgCCXeAl",
+          "cachedResultName": "worker_consulta_stock"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [
+            "data"
+          ],
+          "schema": [
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        672,
+        224
+      ],
+      "id": "c6c8c833-a668-45b2-bf9b-6390035c8d70",
+      "name": "Call 'worker_consulta_stock'"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "yNQE7wyfpLWvVDIk",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/yNQE7wyfpLWvVDIk",
+          "cachedResultName": "worker_alertas_stock"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [
+            "data"
+          ],
+          "schema": [
+            {
+              "id": "data",
+              "displayName": "data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        304,
+        384
+      ],
+      "id": "b3e814cb-be69-4793-99e5-ea7e57b611e1",
+      "name": "Call 'worker_alertas_stock'"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5e9ea387-ada9-4baa-b936-9499f8ed3bc8",
+              "name": "data",
+              "value": "={{ $('Webhook').item.json.body.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -80,
+        64
+      ],
+      "id": "06ea9dfd-3d1d-4d4a-9da2-4f3c0f5ab2a3",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7c551d93-cc81-41ca-b836-9dc99ba6fad8",
+              "name": "data",
+              "value": "={{ $('Webhook').item.json.body.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "de69ad35-7fb1-4be7-8a50-600c549aa9a0",
+              "name": "resumen_previo",
+              "value": "={{ $('Capturar Datos Sesión').item.json.resumen_previo }}",
+              "type": "string"
+            },
+            {
+              "id": "56d7fdb9-481a-411d-bc79-b9da437a7836",
+              "name": "estado_previo",
+              "value": "={{ $('Capturar Datos Sesión').item.json.estado_previo }}",
+              "type": "string"
+            },
+            {
+              "id": "bdd5d4ae-00cc-4af3-ae0f-75356133658a",
+              "name": "datos_clave_previos",
+              "value": "={{ $('Capturar Datos Sesión').item.json.datos_clave_previos }}",
+              "type": "string"
+            },
+            {
+              "id": "3ee39667-1675-4627-ad15-e445e12bcbe5",
+              "name": "es_cliente_nuevo",
+              "value": "={{ !$('Capturar Datos Sesión').item.json.sesion_existente }}",
+              "type": "boolean"
+            },
+            {
+              "id": "f9908989-33ee-4181-9ac3-c8916e4a35df",
+              "name": "cantidad_mensajes_previa",
+              "value": "={{ ($('Capturar Datos Sesión').item.json.cantidad_mensajes_previa || 0) + 1 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        496,
+        224
+      ],
+      "id": "24f0d526-d855-4f82-b45a-fb21388e4acb",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b6f32212-70ea-4ec0-9049-ed22295beeb0",
+              "name": "data",
+              "value": "={{ $('Webhook').item.json.body.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -80,
+        384
+      ],
+      "id": "726bd021-b080-48d4-87b2-acaaad6f9bcb",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d28574a1-4b91-479c-a1e6-6513a82220ad",
+              "name": "mensaje_usuario",
+              "value": "\"No entendí tu consulta 🤔 Un encargado va a revisarlo a la brevedad.\"",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -80,
+        576
+      ],
+      "id": "c2d81ff4-3b3f-4195-b824-bf5a8038a034",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Webhook').item.json.body.message.chat.id }}",
+        "text": "={{ $json.mensaje_usuario }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        576
+      ],
+      "id": "3f48f19a-9da1-4d18-99b3-9d16e7e03a97",
+      "name": "Send a text message1",
+      "webhookId": "72cc8846-35f2-44df-8887-5691be5e741f",
+      "credentials": {
+        "telegramApi": {
+          "id": "rYQKWCmca2QMlRvu",
+          "name": "Telegram - StockMama_Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Webhook').item.json.body.message.chat.id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        64
+      ],
+      "id": "edae845f-ed88-439a-a58d-e67e7ec9408c",
+      "name": "Send a text message2",
+      "webhookId": "946be89e-71dc-4aee-a27d-02e8b7a39ab4",
+      "credentials": {
+        "telegramApi": {
+          "id": "rYQKWCmca2QMlRvu",
+          "name": "Telegram - StockMama_Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Webhook').item.json.body.message.chat.id }}",
+        "text": "={{ $('Call \\'worker_consulta_stock\\'').item.json.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2016,
+        64
+      ],
+      "id": "faf2ff26-a9a4-4ca7-afff-17e86bb57689",
+      "name": "Send a text message3",
+      "webhookId": "0a8a6e59-d7c3-4af9-8e8f-2f6bc8dae245",
+      "credentials": {
+        "telegramApi": {
+          "id": "rYQKWCmca2QMlRvu",
+          "name": "Telegram - StockMama_Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Webhook').item.json.body.message.chat.id }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        448,
+        384
+      ],
+      "id": "e4f4f2ba-975b-425b-bbb9-f32de3f1f1af",
+      "name": "Send a text message4",
+      "webhookId": "e18efcfc-9fd6-4e5c-9f13-7f133ea0bfda",
+      "credentials": {
+        "telegramApi": {
+          "id": "rYQKWCmca2QMlRvu",
+          "name": "Telegram - StockMama_Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appaXdjKnpanLudW6",
+          "mode": "list",
+          "cachedResultName": "CleanHome_Memoria",
+          "cachedResultUrl": "https://airtable.com/appaXdjKnpanLudW6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbly2BlrDSk1ViRgy",
+          "mode": "list",
+          "cachedResultName": "Sesiones",
+          "cachedResultUrl": "https://airtable.com/appaXdjKnpanLudW6/tbly2BlrDSk1ViRgy"
+        },
+        "filterByFormula": "={Session_ID} = '{{ $('Webhook').item.json.body.message.chat.id }}'",
+        "returnAll": false,
+        "limit": 1,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        224
+      ],
+      "id": "1c096b45-a394-4c72-bee7-970e26afe3cb",
+      "name": "Buscar Sesión",
+      "alwaysOutputData": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "tpX07v4NdTpwUSi3",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "cf87be47-9018-4a15-8baa-c1811303200c",
+              "leftValue": "={{ $json.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        224
+      ],
+      "id": "97ab58f7-6dea-42d4-8b02-8af85b0a4720",
+      "name": "¿Cliente existe?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4116f75d-7604-46f6-98c5-baecc71e7bd4",
+              "name": "cantidad_mensajes_actual",
+              "value": "={{ ($('Capturar Datos Sesión').item.json.cantidad_mensajes_previa || 0) + 1 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        832,
+        224
+      ],
+      "id": "8ded8354-f865-4e3d-bac0-fdb3a98ae1b7",
+      "name": "Calcular Contador"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "59957575-1a57-4909-b937-b629b96b919e",
+              "leftValue": "={{ $json.cantidad_mensajes_actual }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        992,
+        224
+      ],
+      "id": "dec6b59a-4b26-479a-a204-f1f2725a1eb5",
+      "name": "¿Requiere Resumen?"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Resumen anterior: {{ $('Buscar Sesión').item.json.Resumen_Consolidado || 'Sin resumen previo' }}\nEstado anterior: {{ $('Buscar Sesión').item.json.Estado_Caso || 'nuevo' }}\nDatos clave previos: {{ $('Buscar Sesión').item.json.Datos_Clave || 'Ninguno' }}\n\nÚltima consulta del cliente: {{ $('Webhook').item.json.body.message.text }}\nRespuesta del asistente: {{ $('Call \\'worker_consulta_stock\\'').item.json.message }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Sos un sistema de resumen de conversaciones para CleanHome. Tu única tarea es condensar el historial de un cliente en un JSON, sin texto adicional antes ni después.  Devolvé EXCLUSIVAMENTE un objeto JSON válido con este formato exacto, sin markdown, sin explicaciones, sin comillas triples:  {   \"asunto_principal\": \"string breve describiendo el tema central de la conversación\",   \"puntos_clave\": [\"array de strings con datos relevantes: productos consultados, preferencias, cantidades mencionadas\"],   \"accion_requerida\": \"string describiendo qué sigue: nada, contactar al cliente, reponer stock, etc.\" }  No inventes datos que no estén en el contexto provisto. Si no hay información suficiente para un campo, usá un string vacío o un array vacío."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1168,
+        64
+      ],
+      "id": "58d0fb1d-12fe-447f-a223-ea32bb10f25f",
+      "name": "Generar Resumen JSON"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "claude-haiku-4-5-20251001",
+          "mode": "list",
+          "cachedResultName": "Claude Haiku 4.5"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.6,
+      "position": [
+        1296,
+        192
+      ],
+      "id": "c253495e-4e19-4206-8694-a3128918aa6f",
+      "name": "Anthropic Chat Model",
+      "credentials": {
+        "anthropicApi": {
+          "id": "ccIbSZIAJ3Ka8aWA",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "38b5232d-5f13-4d7c-b2e4-f62a603afbb5",
+              "name": "resumen_final",
+              "value": "={{ $('Buscar Sesión').item.json.Resumen_Consolidado || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "1ed6b92a-a3d3-402a-bf48-068b4b836095",
+              "name": "estado_final",
+              "value": "={{ $('Buscar Sesión').item.json.Estado_Caso || 'nuevo' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1360,
+        400
+      ],
+      "id": "ce54ea64-9d33-4c28-8db9-8bd1be6aa3ef",
+      "name": "Mantener Resumen Previo"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "72f1e38b-644b-4caf-b50a-38dc97c85558",
+              "name": "resumen_final",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "dde8be5f-a13c-439f-9c6e-ca86b784ef00",
+              "name": "estado_final",
+              "value": "={{ $('Buscar Sesión').item.json.Estado_Caso || 'en_consulta' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1472,
+        64
+      ],
+      "id": "d4f5eeab-6996-444d-b346-eb9c142157f7",
+      "name": "Formatear Resumen IA"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1ca71788-aa70-4a19-b835-53632e9bdad1",
+              "leftValue": "={{ $('Edit Fields1').item.json.es_cliente_nuevo }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1632,
+        64
+      ],
+      "id": "e1b199f2-f974-4058-a408-45afdd679b24",
+      "name": "¿Es Cliente Nuevo?"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appaXdjKnpanLudW6",
+          "mode": "list",
+          "cachedResultName": "CleanHome_Memoria",
+          "cachedResultUrl": "https://airtable.com/appaXdjKnpanLudW6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbly2BlrDSk1ViRgy",
+          "mode": "list",
+          "cachedResultName": "Sesiones",
+          "cachedResultUrl": "https://airtable.com/appaXdjKnpanLudW6/tbly2BlrDSk1ViRgy"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Session_ID": "={{ $('Webhook').item.json.body.message.chat.id.toString() }}",
+            "Fecha_Actualizacion": "={{ $now.toISO() }}",
+            "Resumen_Consolidado": "={{ $json.resumen_final }}",
+            "Estado_Caso": "={{ $json.estado_final }}",
+            "Cantidad_Mensajes": "={{ $json.cantidad_mensajes_actual }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Session_ID",
+              "displayName": "Session_ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha_Actualizacion",
+              "displayName": "Fecha_Actualizacion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resumen_Consolidado",
+              "displayName": "Resumen_Consolidado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado_Caso",
+              "displayName": "Estado_Caso",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "nuevo",
+                  "value": "nuevo"
+                },
+                {
+                  "name": "en_consulta",
+                  "value": "en_consulta"
+                },
+                {
+                  "name": "cotizando",
+                  "value": "cotizando"
+                },
+                {
+                  "name": "resuelto",
+                  "value": "resuelto"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Datos_Clave",
+              "displayName": "Datos_Clave",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Cantidad_Mensajes",
+              "displayName": "Cantidad_Mensajes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1840,
+        -32
+      ],
+      "id": "75d4c9bd-3549-4b92-a15c-e83fa74698aa",
+      "name": "Crear Sesión",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "tpX07v4NdTpwUSi3",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appaXdjKnpanLudW6",
+          "mode": "list",
+          "cachedResultName": "CleanHome_Memoria",
+          "cachedResultUrl": "https://airtable.com/appaXdjKnpanLudW6"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbly2BlrDSk1ViRgy",
+          "mode": "list",
+          "cachedResultName": "Sesiones",
+          "cachedResultUrl": "https://airtable.com/appaXdjKnpanLudW6/tbly2BlrDSk1ViRgy"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Buscar Sesión').item.json.id }}",
+            "Fecha_Actualizacion": "={{ $now.toISO() }}",
+            "Resumen_Consolidado": "={{ $json.resumen_final }}",
+            "Estado_Caso": "={{ $json.estado_final }}",
+            "Cantidad_Mensajes": "={{ $json.cantidad_mensajes_actual }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Session_ID",
+              "displayName": "Session_ID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Fecha_Actualizacion",
+              "displayName": "Fecha_Actualizacion",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Resumen_Consolidado",
+              "displayName": "Resumen_Consolidado",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Estado_Caso",
+              "displayName": "Estado_Caso",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "nuevo",
+                  "value": "nuevo"
+                },
+                {
+                  "name": "en_consulta",
+                  "value": "en_consulta"
+                },
+                {
+                  "name": "cotizando",
+                  "value": "cotizando"
+                },
+                {
+                  "name": "resuelto",
+                  "value": "resuelto"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Datos_Clave",
+              "displayName": "Datos_Clave",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Cantidad_Mensajes",
+              "displayName": "Cantidad_Mensajes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        1840,
+        160
+      ],
+      "id": "e5474f62-88dd-45ad-a571-825d3cfbeedd",
+      "name": "Actualizar Sesión",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "tpX07v4NdTpwUSi3",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1c1492a4-e0a7-406e-9497-234a5055a4f5",
+              "name": "resumen_previo",
+              "value": "={{ $json.fields.Resumen_Consolidado || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "7733a103-9abd-4664-a8a1-0b5cb8319f8f",
+              "name": "estado_previo",
+              "value": "={{ $json.fields.Estado_Caso || 'nuevo' }}",
+              "type": "string"
+            },
+            {
+              "id": "653c3006-8c52-45d7-b9d6-cca07d2b8c9d",
+              "name": "datos_clave_previos",
+              "value": "={{ $json.fields.Datos_Clave || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "1e1c8054-8af1-42e8-a6d9-006330dd2990",
+              "name": "cantidad_mensajes_previa",
+              "value": "={{ $json.fields.Cantidad_Mensajes || 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "2f213b6c-4552-4c97-a8ee-13a093f09d19",
+              "name": "sesion_existente",
+              "value": "={{ Object.keys($json).length > 0 }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        80,
+        224
+      ],
+      "id": "b3cc2206-2e6f-44cb-9f10-f64e2687fd29",
+      "name": "Capturar Datos Sesión"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Buscar Sesión",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Call 'worker_ingreso_stock'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Call 'worker_consulta_stock'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Call 'worker_alertas_stock'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'worker_ingreso_stock'": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'worker_consulta_stock'": {
+      "main": [
+        [
+          {
+            "node": "Calcular Contador",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'worker_alertas_stock'": {
+      "main": [
+        [
+          {
+            "node": "Send a text message4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar Sesión": {
+      "main": [
+        [
+          {
+            "node": "Capturar Datos Sesión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Cliente existe?": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular Contador": {
+      "main": [
+        [
+          {
+            "node": "¿Requiere Resumen?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Requiere Resumen?": {
+      "main": [
+        [
+          {
+            "node": "Generar Resumen JSON",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mantener Resumen Previo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generar Resumen JSON": {
+      "main": [
+        [
+          {
+            "node": "Formatear Resumen IA",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generar Resumen JSON",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mantener Resumen Previo": {
+      "main": [
+        [
+          {
+            "node": "¿Es Cliente Nuevo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear Resumen IA": {
+      "main": [
+        [
+          {
+            "node": "¿Es Cliente Nuevo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es Cliente Nuevo?": {
+      "main": [
+        [
+          {
+            "node": "Crear Sesión",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar Sesión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear Sesión": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Sesión": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capturar Datos Sesión": {
+      "main": [
+        [
+          {
+            "node": "¿Cliente existe?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d3f24ade-b9cc-4121-9954-e07c00489f2c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "91416338e6baaad4c5c8435c195e646f8e32e2a2d42ef188ca0d706512887a79"
+  },
+  "nodeGroups": [],
+  "id": "7SgXB0h3diGhK6dB",
+  "tags": []
+}
